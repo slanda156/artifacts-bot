@@ -35,20 +35,30 @@ def fighting() -> None:
 def farming():
     cooldown = 0
     arrived = True
-    while True:
+    running = True
+    needed = 96
+    while running:
         startTime = time.time()
         if cooldown <= 0:
-            # inventory = gawin.getInventory()
+            inventory = gawin.getInventory()
+            for item in inventory:
+                if item["code"] == "copper_ore" and int(item["quantity"]) >= needed:
+                    running = False
+                    logger.info("Enough copper ore")
+                    break
+                elif item["code"] == "copper_ore":
+                    logger.info(f"Have {int(item['quantity']) / needed * 100:.1f}% copper ore")
+                    logger.info(f"Need {needed - int(item['quantity'])} more copper ore")
             if not arrived:
                 cooldown, arrived = gawin.move((-1, 0))
             else:
-                cooldown = gawin.chopTrees()
+                cooldown = gawin.harvest()
         else:
             cooldown -= time.time() - startTime
 
 if __name__ == "__main__":
     try:
-        fighting()
+        farming()
 
     except Exception:
         logger.critical(traceback.format_exc())

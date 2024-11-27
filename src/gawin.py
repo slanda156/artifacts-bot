@@ -1,11 +1,14 @@
 from logging import getLogger
+from pathlib import Path
+from typing import Union
 
 import httpx
 
 
 logger = getLogger(__name__)
 
-with open("../keys/token.txt", "r") as f:
+tokenPath = Path.cwd() / Path("keys/token.txt")
+with open(tokenPath, "r") as f:
     token = f.read().strip()
 
 server = "https://api.artifactsmmo.com"
@@ -63,31 +66,30 @@ def move(pos: tuple[int, int]) -> tuple[int, bool]:
     return data["cooldown"]["total_seconds"], arrived
 
 
-def chopTrees() -> int:
-    logger.info("Chopping trees")
+def harvest() -> int:
+    logger.info("Harvisiting resources")
     url = f"{server}/my/{character}/action/gathering"
     response = httpx.post(url, headers=headers)
     if response.status_code != 200:
-        logger.error(f"Error while chopping: {response.status_code}")
+        logger.error(f"Error while harvisting: {response.status_code}")
         logger.debug(response.json())
         if response.status_code == 499:
             cooldown = float(response.json()["error"]["message"][23:-14])
             return int(cooldown)
         return 5
     data = response.json()["data"]
-    return data["cooldown"]["total_seconds"]
+    return data["cooldown"]["remaining_seconds"]
 
 
-def getInventory():
+def getInventory() -> list[dict[str, Union[str, int, float]]]:
     logger.info("Getting inventory")
     url = f"{server}/my/characters"
     response = httpx.get(url, headers=headers)
     if response.status_code != 200:
         logger.error(f"Error while getting inventory: {response.status_code}")
-        logger.debug(response.json())
         return []
     characters = response.json()["data"]
     for char in characters:
         if char["name"] == character:
-            logger.debug(char["inventory"])
             return char["inventory"]
+    return []
