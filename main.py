@@ -21,6 +21,18 @@ def fighting() -> None:
     while True:
         startTime = time.time()
         if cooldown <= 0:
+            inventory = gawin.getInventory()
+            itemsMax = gawin.getCharacter()["inventory_max_items"]
+            logger.debug(f"Inventory max items: {itemsMax}")
+            itemsTotal = 0
+            for item in inventory:
+                itemsTotal += int(item["quantity"])
+            inventoryPercentage = itemsTotal / itemsMax * 100
+            if inventoryPercentage >= 98:
+                logger.warning("Inventory almost full")
+                logger.info(f"Inventory: {itemsTotal}/{itemsMax}")
+                break
+            logger.info(f"Inventory: {itemsTotal / itemsMax * 100:.1f}%")
             if fighting:
                 cooldown = gawin.fight()
                 fighting = False
@@ -36,19 +48,21 @@ def farming():
     cooldown = 0
     arrived = True
     running = True
-    needed = 96
     while running:
         startTime = time.time()
         if cooldown <= 0:
             inventory = gawin.getInventory()
+            itemsMax = gawin.getCharacter()["inventory_max_items"]
+            logger.debug(f"Inventory max items: {itemsMax}")
+            itemsTotal = 0
             for item in inventory:
-                if item["code"] == "copper_ore" and int(item["quantity"]) >= needed:
-                    running = False
-                    logger.info("Enough copper ore")
-                    break
-                elif item["code"] == "copper_ore":
-                    logger.info(f"Have {int(item['quantity']) / needed * 100:.1f}% copper ore")
-                    logger.info(f"Need {needed - int(item['quantity'])} more copper ore")
+                itemsTotal += int(item["quantity"])
+            inventoryPercentage = itemsTotal / itemsMax * 100
+            if inventoryPercentage >= 98:
+                logger.warning("Inventory almost full")
+                logger.info(f"Inventory: {itemsTotal}/{itemsMax}")
+                break
+            logger.info(f"Inventory: {itemsTotal / itemsMax * 100:.1f}%")
             if not arrived:
                 cooldown, arrived = gawin.move((-1, 0))
             else:
@@ -59,6 +73,7 @@ def farming():
 if __name__ == "__main__":
     try:
         farming()
+        #fighting()
 
     except Exception:
         logger.critical(traceback.format_exc())
