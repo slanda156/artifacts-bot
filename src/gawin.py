@@ -93,3 +93,12 @@ def getInventory() -> list[dict[str, Union[str, int, float]]]:
         if char["name"] == character:
             return char["inventory"]
     return []
+
+def getCharacter():
+    logger.info("Getting character")
+    url = f"{server}/characters/{character}"
+    response = httpx.get(url, headers=headers)
+    if response.status_code != 200:
+        logger.error(f"Error while getting character: {response.status_code}")
+        return []
+    return response.json()["data"]
