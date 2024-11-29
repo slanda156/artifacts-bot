@@ -238,5 +238,4 @@ $RECYCLE.BIN/
 # Ignore the key folder
 keys/
 .vscode/
-TODO
 pyproject.toml

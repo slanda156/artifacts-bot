@@ -2,7 +2,6 @@ import yaml
 import logging
 import logging.config
 import traceback
-import time
 
 
 with open("logger.yaml") as f:
@@ -12,53 +11,17 @@ with open("logger.yaml") as f:
 logger = logging.getLogger(__name__)
 
 
-import src.gawin as gawin
+from src.app import App
 
 
-def fighting() -> None:
-    cooldown = 0
-    fighting = False
-    while True:
-        startTime = time.time()
-        if cooldown <= 0:
-            if fighting:
-                cooldown = gawin.fight()
-                fighting = False
-            else:
-                cooldown, needingHealth = gawin.heal()
-                if needingHealth <= 0:
-                    fighting = True
+def main() -> None:
+    app = App()
+    app.run()
 
-        else:
-            cooldown -= time.time() - startTime
-
-def farming():
-    cooldown = 0
-    arrived = True
-    running = True
-    needed = 96
-    while running:
-        startTime = time.time()
-        if cooldown <= 0:
-            inventory = gawin.getInventory()
-            for item in inventory:
-                if item["code"] == "copper_ore" and int(item["quantity"]) >= needed:
-                    running = False
-                    logger.info("Enough copper ore")
-                    break
-                elif item["code"] == "copper_ore":
-                    logger.info(f"Have {int(item['quantity']) / needed * 100:.1f}% copper ore")
-                    logger.info(f"Need {needed - int(item['quantity'])} more copper ore")
-            if not arrived:
-                cooldown, arrived = gawin.move((-1, 0))
-            else:
-                cooldown = gawin.harvest()
-        else:
-            cooldown -= time.time() - startTime
 
 if __name__ == "__main__":
     try:
-        farming()
+        main()
 
     except Exception:
         logger.critical(traceback.format_exc())
