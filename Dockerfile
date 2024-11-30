@@ -10,6 +10,9 @@ COPY src /app/src
 COPY logger.yaml /app/logger.yaml
 COPY keys /app/keys
 
+RUN chmod +x /app/main.py
+RUN chmod -R +x /app/src/
+
 # Set working directory (optional but good practice)
 WORKDIR /app
 
