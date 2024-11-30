@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir -r /requirements.txt
 COPY main.py /app/main.py
 COPY src /app/src
 COPY logger.yaml /app/logger.yaml
+COPY keys /app/keys
 
 # Set working directory (optional but good practice)
 WORKDIR /app
