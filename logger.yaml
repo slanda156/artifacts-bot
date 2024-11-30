@@ -11,8 +11,8 @@ handlers:
   file:
     class: logging.FileHandler
     formatter: complex
-    filename: "log.log"
-    mode: w
+    filename: "logs/log.log"
+    mode: a
 loggers:
   httpcore:
     level: WARNING
