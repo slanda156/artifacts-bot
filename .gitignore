@@ -239,3 +239,4 @@ $RECYCLE.BIN/
 keys/
 .vscode/
 pyproject.toml
+logs/
