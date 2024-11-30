@@ -24,7 +24,7 @@ class App:
 
 
     def run(self) -> None:
-        i = 10
+        i = 20
         while True:
             for character in self.characters.values():
                 character.run()
