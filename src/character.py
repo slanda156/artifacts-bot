@@ -131,7 +131,7 @@ class Character:
                 else: #Temporary
                     target = self.server.getNearest(self.position, "workshop", "mining")
                     if target is not None:
-                        self.state = StateInfo("crafting", target, "copper", 90)
+                        self.state = StateInfo("crafting", target, "iron", 90)
                 if self.state is None:
                     self.cooldown = 5.0
                     logger.error(f"No state found for {self.name}")
@@ -159,19 +159,19 @@ class Character:
 
 
     def craft(self, state: StateInfo) -> None: #TODO: Temporary implementation, needs to be updated
-        item = self.inventory.get("copper_ore")
+        item = self.inventory.get("iron_ore")
         if item is not None and item.quantity // 8 > 0:
             self.server.craft(self.name, state.code, item.quantity // 8)
         else:
             self.lastState = self.state
-            target = self.server.getNearest(self.position, "resource", "copper_rocks")
+            target = self.server.getNearest(self.position, "resource", "iron_rocks")
             if item is not None:
                 amount = (state.amount - item.quantity) * 8
             else:
                 amount = state.amount * 8
             amount = min(amount, self.inventory.freeSlots)
             if target is not None:
-                self.state = StateInfo("gathering", target, "copper_ore", amount)
+                self.state = StateInfo("gathering", target, "iron_ore", amount)
             else:
                 logger.critical("No target found")
                 raise Exception("No target found")
