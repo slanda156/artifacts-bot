@@ -13,6 +13,20 @@ if TYPE_CHECKING:
     from src.server import Server
 
 
+RESOURCE = [
+    {
+        "place": "iron_rocks",
+        "ore": "iron_ore",
+        "ingot": "iron_ingot",
+    },
+    {
+        "place": "copper_rocks",
+        "ore": "copper_ore",
+        "ingot": "copper_ingot",
+    }
+]
+
+
 class Character:
     def __init__(self, server: "Server", name: str, job: JobInfo) -> None:
         self.server = server
@@ -21,6 +35,7 @@ class Character:
         self._state: Union[StateInfo, None] = None
         self.lastState: Union[StateInfo, None] = None
         self.maxLevel = 0
+        self.currentResource: dict[str, str] = RESOURCE[1]
         self.lastRun = time.time()
         self.lastRefresh = -1.0
         self.maxTime = 1.0
@@ -131,7 +146,7 @@ class Character:
                 else: #Temporary
                     target = self.server.getNearest(self.position, "workshop", "mining")
                     if target is not None:
-                        self.state = StateInfo("crafting", target, "iron", 90)
+                        self.state = StateInfo("crafting", target, self.currentResource["ingot"], 90)
                 if self.state is None:
                     self.cooldown = 5.0
                     logger.error(f"No state found for {self.name}")
@@ -164,14 +179,14 @@ class Character:
             self.server.craft(self.name, state.code, item.quantity // 8)
         else:
             self.lastState = self.state
-            target = self.server.getNearest(self.position, "resource", "iron_rocks")
+            target = self.server.getNearest(self.position, "resource", self.currentResource["place"])
             if item is not None:
                 amount = (state.amount - item.quantity) * 8
             else:
                 amount = state.amount * 8
             amount = min(amount, self.inventory.freeSlots)
             if target is not None:
-                self.state = StateInfo("gathering", target, "iron_ore", amount)
+                self.state = StateInfo("gathering", target, self.currentResource["ore"], amount)
             else:
                 logger.critical("No target found")
                 raise Exception("No target found")
