@@ -17,12 +17,12 @@ RESOURCE = [
     {
         "place": "iron_rocks",
         "ore": "iron_ore",
-        "ingot": "iron_ingot",
+        "ingot": "iron",
     },
     {
         "place": "copper_rocks",
         "ore": "copper_ore",
-        "ingot": "copper_ingot",
+        "ingot": "copper",
     }
 ]
 
