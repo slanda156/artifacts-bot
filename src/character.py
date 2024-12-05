@@ -174,7 +174,7 @@ class Character:
 
 
     def craft(self, state: StateInfo) -> None: #TODO: Temporary implementation, needs to be updated
-        item = self.inventory.get("iron_ore")
+        item = self.inventory.get(self.currentResource["ore"])
         if item is not None and item.quantity // 8 > 0:
             self.server.craft(self.name, state.code, item.quantity // 8)
         else:
